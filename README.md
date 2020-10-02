@@ -10,8 +10,6 @@ Note: The script automatically moves all e-mail messages processed.
 
 ``pip3 install mail-parser``
 
-Modify the imap host, username and password variables in mail.py
-
 ## Usage
 
 Rename example.yml to config.yml and set the values.
