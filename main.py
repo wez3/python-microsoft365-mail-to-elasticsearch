@@ -6,8 +6,11 @@ import urllib.parse
 import requests
 import mailparser
 import yaml
+import logging
 
 ## Load configuration
+logging.basicConfig(filename='mail.log', filemode='a', level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s')
+
 with open("config.yml", 'r') as stream:
     try:
         config = yaml.safe_load(stream)
@@ -47,7 +50,7 @@ headers = {
 api_root = "https://graph.microsoft.com/v1.0/"
 
 if len(aadToken) > 0:
-    print("Access token acquired.")
+    logging.info("Access token acquired.")
 
 ## HTTP functions
 def make_request(url):
@@ -108,12 +111,14 @@ def make_request_post(url, data):
 output = open('mail.json', 'a')
 
 ## Retrieve messages
+logging.info("Retrieving all mails in the Inbox")
 messages = "https://graph.microsoft.com/v1.0/users('{}')/mailFolders/{}/messages?$select=id".format(user, inbox_id)
 response = make_request(messages)
 jsonResponse = json.loads(response)
 
 ## Loop through messages and process
 for mail in jsonResponse['value']:
+    logging.info("Processing mail: {}".format(mail['id']))
     message = "https://graph.microsoft.com/v1.0/users('{}')/messages/{}/$value".format(user, mail['id'])
     response = make_request(message)
     mime = response
@@ -124,3 +129,5 @@ for mail in jsonResponse['value']:
     delete = "https://graph.microsoft.com/v1.0/users('{}')/messages/{}/move".format(user, mail['id'])
     response = make_request_post(delete, '{"destinationId": "' + deleteditems_id + '"}')
     print(response.read())
+
+logging.info("Run completed")
