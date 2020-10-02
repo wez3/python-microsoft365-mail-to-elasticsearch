@@ -30,12 +30,16 @@ After configuration, run the script with:
 
 ### Retrieve user ID's
 
-``messages = "https://graph.microsoft.com/v1.0/users".format(user)
+```
+messages = "https://graph.microsoft.com/v1.0/users"
 response = make_request(messages)
-print(response)``
+print(response)
+```
 
 ### Retrieve mailFolder ID's
 
-``messages = "https://graph.microsoft.com/v1.0/users('{}')/mailFolders".format(user)
+```
+messages = "https://graph.microsoft.com/v1.0/users('{}')/mailFolders".format(user)
 response = make_request(messages)
-print(response)``
+print(response)
+```
