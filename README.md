@@ -21,6 +21,7 @@ The values explained:
 - user: the ID of the user to read the e-mail from
 - inbox_id: the ID of the Inbox folder
 - deleteditems_id: the ID of the Deleted items folder
+- attachments_path: path to save attachments separately on disk
 
 After configuration, run the script with:
 

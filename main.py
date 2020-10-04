@@ -7,6 +7,9 @@ import requests
 import mailparser
 import yaml
 import logging
+import hashlib
+import base64
+import os
 
 ## Load configuration
 logging.basicConfig(filename='mail.log', filemode='a', level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s')
@@ -23,6 +26,7 @@ tenantId = config['tenantId']
 user = config['user']
 inbox_id = config['inbox_id']
 deleteditems_id = config['deleteditems_id']
+attachments_path = config['attachments_path']
 
 ## Azure Active Directory token endpoint.
 url = "https://login.microsoftonline.com/%s/oauth2/v2.0/token" % (tenantId)
@@ -123,7 +127,24 @@ for mail in jsonResponse['value']:
     response = make_request(message)
     mime = response
     m = mailparser.parse_from_string(mime)
-    json.dump(json.loads(m.mail_json), output)
+    attachment_hashes = []
+    for attachment in m.attachments:
+        decoded = base64.b64decode(attachment['payload'])
+        attachment_hash = hashlib.md5(decoded).hexdigest()
+        attachment_hashes.append(attachment_hash)
+
+    path = attachments_path + "/{}".format(mail['id'])
+    try:
+        logging.info("Writing attachments")
+        os.mkdir(path)
+        m.write_attachments(path)
+    except:
+        logging.info("Writing attachments failed")
+
+    json_mail = json.loads(m.mail_json)
+    json_mail.pop('attachments', None)
+    json_mail['attachments_hashes'] = attachment_hashes
+    json.dump(json_mail, output)
     output.write("\r\n")
 
     delete = "https://graph.microsoft.com/v1.0/users('{}')/messages/{}/move".format(user, mail['id'])
