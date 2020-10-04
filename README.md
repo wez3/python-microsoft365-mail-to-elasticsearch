@@ -1,4 +1,4 @@
-# Python Microsoft 365 mail to JSON-file through
+# Python Microsoft 365 mail to JSON-file
 
 Reads a Microsoft 365 mailbox through Microsoft Graph and writes the e-mails in JSON-format to a file (line by line).
 The output file can be read by filebeat, to forward the e-mails to logstash / elasticsearch.
