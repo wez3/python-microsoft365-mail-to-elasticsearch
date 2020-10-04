@@ -144,6 +144,7 @@ for mail in jsonResponse['value']:
     json_mail = json.loads(m.mail_json)
     json_mail.pop('attachments', None)
     json_mail['attachments_hashes'] = attachment_hashes
+    json_mail['mail_id'] = mail['id']
     json.dump(json_mail, output)
     output.write("\r\n")
 
